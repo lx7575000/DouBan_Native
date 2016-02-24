@@ -1,0 +1,3 @@
+rootProject.name = 'DouBan_Native'
+
+include ':app'
