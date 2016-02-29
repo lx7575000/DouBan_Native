@@ -41,11 +41,19 @@ export default class MovieSummary extends Component{
       .done();
   }
 
+  _showCasts(casts){
+    let actors = '';
+    casts.map( c => {
+      actors = actors + c.name + "/"
+    });
+    return actors;
+  }
+
   render(){
     if(!this.state.loaded){
       console.log('is loading ......');
       return(
-        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             <Loading />
             <Text>
                 正在努力加载 《{this.props.movie.title}》 内容
@@ -57,7 +65,7 @@ export default class MovieSummary extends Component{
     this.movie = this.state.MovieDetial;
     this.summary = this.movie.summary.split(/\n/).map( p => {
       return (
-        <View key={'summary' + p[0]} style={{marginBottom: 16, paddingLeft: 6, paddingRight: 6}}>
+        <View key={'summary' + p.length} style={{marginBottom: 16, paddingLeft: 6, paddingRight: 6}}>
           <Text style={styles.description}>
               {p}
           </Text>
@@ -67,7 +75,20 @@ export default class MovieSummary extends Component{
 
     return (
       <View style={styles.container}>
-        {this.summary}
+        <View style={{flexDirection: 'row', flex: 1}}>
+          <Image source={{uri: this.props.movie.images.large}} style={styles.image}/>
+          <View style={{flexDirection: 'column', flex: 1, marginTop: 15}}>
+            <Text style={{fontSize: 14, lineHeight: 20}}>
+              主演 : {this._showCasts(this.props.movie.casts)}
+            </Text>
+            <Text style={{fontSize: 14, lineHeight: 20}}>
+              
+            </Text>
+          </View>
+        </View>
+        <View style={{flex: 1}}>
+          {this.summary}
+        </View>
       </View>
     )
   }
@@ -88,5 +109,11 @@ let styles = StyleSheet.create({
     lineHeight: 26,
     fontFamily: 'Helvetica Neue',
     fontSize: 16,
+  },
+  image: {
+    width: 100,
+    height: 132,
+    marginLeft: 20,
+    marginTop: 9,
   },
 });

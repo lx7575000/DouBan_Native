@@ -4,6 +4,7 @@ import React, {
   Component,
   StyleSheet,
   Text,
+  ActivityIndicatorIOS,
   View,
   ListView,
   TouchableOpacity,
@@ -29,6 +30,8 @@ export default class MovieList extends Component{
       // movies: this.ds.cloneWithRows(assets.topMovie.subjects),
       movies: [],
       loaded: true,
+      count: 0,
+      total: 0,
     };
 
     this._fetchData();
@@ -38,13 +41,48 @@ export default class MovieList extends Component{
       .then(response => response.json())
       .then(responseData => {
         // console.log('loaded ' + this.state.loaded);
+        let newStart = responseData.count + responseData.start;
         this.setState({
-          movies: this.ds.cloneWithRows(responseData.subjects),
+          movies: responseData.subjects,
           loaded: false,
+          total: responseData.total,
+          start: newStart
         });
 
       });
   }
+
+  _onEndReached(){
+    console.log(`到底了！开始: ${this.state.start}, 总共： ${this.state.total}`);
+    if(this.state.total > this.state.start){
+      this.loadMore();
+    }
+  }
+
+  requestURL(
+    url=this.REQUEST_URL,
+    count=this.state.count,
+    start=this.state.start
+  ){
+    return(
+      `${url}?count=${count}&start=${start}`
+    );
+  }
+
+  loadMore(){
+    console.log('loadMore ....');
+      fetch(this.requestURL())
+        .then(response => response.json())
+        .then(responseData => {
+          let newStart = responseData.start + responseData.count;
+          this.setState({
+            start: newStart,
+            movies: [...this.state.movies, ...responseData.subjects],
+          })
+        })
+        .done()
+  }
+
   _showMovieSummary(movie){
     this.props.navigator.push({
       title: movie.title,
@@ -88,6 +126,41 @@ export default class MovieList extends Component{
     );
   }
 
+  _renderHeader(){
+    return(
+      <View style={{marginBottom: 10, justifyContent: 'center', alignItems: 'center'}}>
+        <Text>
+          八戒回头是岸。
+        </Text>
+      </View>
+    )
+  }
+
+  _renderFooter(){
+      if(this.state.total > this.state.start){
+        return(
+          <View style={{
+            marginVertical: 20,
+            paddingBottom: 50,
+            alignSelf: 'center',
+          }}>
+            <ActivityIndicatorIOS/>
+          </View>
+        );
+        }else{
+          return(
+            <View style={{
+              marginVertical: 20,
+              paddingBottom: 50,
+              alignSelf: 'center',
+            }}>
+              <Text style={{color: 'rgba(0,0,0, 0.3)'}}>
+                没有可以显示的内容了: )
+              </Text>
+            </View>
+          );
+      }
+    }
   render(){
     if(this.state.loaded){
       return <Loading />
@@ -95,18 +168,15 @@ export default class MovieList extends Component{
     return (
       <View style={mainstyles.container}>
           <ListView
-            dataSource={this.state.movies}
+            dataSource={this.ds.cloneWithRows(this.state.movies)}
             renderRow={this._renderMovieItem.bind(this)}
+            renderFooter={() => this._renderFooter()}
+            onEndReached={() => this._onEndReached()}
           />
       </View>
     )
   }
 }
-
-
-
-
-
 
 
 let mainstyles = StyleSheet.create({

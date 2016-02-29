@@ -27,13 +27,13 @@ const styles = StyleSheet.create({
   title:{
     fontSize: 18,
     fontWeight: '800',
-    lineHeight: 26,
-    marginBottom: 16
+    lineHeight: 23,
+    marginBottom: 8
   },
   year:{
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: '300',
-    lineHeight: 20,
+    lineHeight: 18,
   },
   rating: {
     color: 'rgb(235, 146, 6)',

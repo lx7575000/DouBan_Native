@@ -20,14 +20,17 @@ import MovieList from './App/Components/MovieList';
 import Loading from './App/Components/Loading';
 
 import TopMovie from './App/Components/TopMovie';
+import DBEvents from './App/Components/DBEvents';
+
 
 class DouBan_Native extends Component {
   constructor(props){
     super(props);
     this.state = {
-      selected: 'topMovie',
+      selected: 'DBEvents',
     }
   }
+
 
   render() {
     return (
@@ -47,6 +50,18 @@ class DouBan_Native extends Component {
         }}
        >
        <TopMovie />
+       </TabBarIOS.Item>
+       <TabBarIOS.Item
+       title="本地生活"
+       systemIcon="more"
+       selected={this.state.selected === 'DBEvents'}
+       onPress={() => {
+         this.setState({
+           selected: 'DBEvents',
+         })
+       }}
+       >
+        <DBEvents />
        </TabBarIOS.Item>
       </TabBarIOS>
     );
